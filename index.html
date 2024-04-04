@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="generator" content="Hugo 0.88.1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
+	<link rel="stylesheet" href="css/custom.css">
+	<link rel="stylesheet" href="css/normalize.css">
+	<title>RALL-E</title>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body data-new-gr-c-s-check-loaded="14.1091.0" data-gr-ext-installed="">
+
+<div class=" container" >
+<header>
+</header>
+<main>
+<article itemscope itemtype="https://schema.org/BlogPosting">
+
+<div class="container pt-5 mt-5 shadow p-5 mb-5 bg-white rounded">
+	<div class="text-center">
+		<h1>RALL-E:</h1>
+        <h3>Robust Codec Language Modeling with Chain-of-Thought Prompting for Text-to-Speech Synthesis</h3>
+		[<a href="https://arxiv.org/abs/2403.03100">Paper</a>]
+		<br> 
+		<p>  
+			Detai Xin<sup>1,2</sup>, Xu Tan<sup>1</sup>, Kai Shen<sup>1,3</sup>, Zeqian Ju<sup>1,4</sup>, Dongchao Yang<sup>5</sup>, Yuancheng Wang<sup>6</sup>,  
+		</p>
+		<p>Shinnosuke Takamichi<sup>2</sup>, Hiroshi Saruwatari<sup>2</sup>, Shujie Liu<sup>1</sup>, Jinyu Li<sup>1</sup>, Sheng Zhao<sup>1</sup>
+		</p>   
+		<p ><sup>1</sup>Microsoft, <sup>2</sup>The University of Tokyo,</p>  
+		<p ><sup>3</sup>Zhejiang University, <sup>4</sup>University of Science and Technology of China,</p>  
+		<p ><sup>5</sup>The Chinese University of Hong Kong, <sup>6</sup>The Chinese University of Hong Kong, Shenzhen</p>  
+	</div>
+	<p>
+        <b>Abstract.</b> 
+		We present RALL-E, a robust language modeling method for text-to-speech (TTS) synthesis.
+While previous work based on large language models (LLMs) shows impressive performance on zero-shot TTS, such methods often suffer from poor robustness, such as unstable prosody (weird pitch and rhythm/duration) and a high word error rate (WER), due to the autoregressive prediction style of language models.
+The core idea behind RALL-E is chain-of-thought (CoT) prompting, which decomposes the task into simpler steps to enhance the robustness of LLM-based TTS.
+To accomplish this idea, RALL-E first predicts prosody features (pitch and duration) of the input text and uses them as intermediate conditions to predict speech tokens in a CoT style.
+Second, RALL-E utilizes the predicted duration prompt to guide the computing of self-attention weights in Transformer to enforce the model to focus on the corresponding phonemes and prosody features when predicting speech tokens.
+Results of comprehensive objective and subjective evaluations demonstrate that, compared to a powerful baseline method VALL-E, RALL-E significantly improves the WER of zero-shot TTS from 6.3% (without reranking) and 2.1 (with reranking) to 2.8% and 1.0%, respectively.
+Furthermore, we demonstrate that RALL-E correctly synthesizes sentences that are hard for VALL-E and reduces the error rate from 68% to 4%.	<br>
+		<br>
+			This page is <b> for research demonstration purposes </b> only.
+		<br>
+
+      </p>
+</div>
+
+<div class="container pt-5 mt-5 shadow p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;"> Zero-Shot TTS Samples </h2>
+	<h6 style="text-align: left;"> We show the audio samples of GT, RALL-E, ELLA-V, and VALL-E selected from LibriSpeech test-clean set.
+		We cannot show the samples of VALL-T since it is tested on LibriTTS.
+		The WER% and transcriptions recognized by the ASR model used in the paper are also provided,
+		where mispronunciation/repetition/hallucination is denoted in <b>UPPER case</b>, 
+		word omission is denoted by <b>*</b>.
+	</h6>
+	<hr>
+	<p><b>Prompt text</b>: I thought few men would follow me for I was young</p>
+	<p><b>Prompt audio</b>:</p><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/prompt/01.wav" >Your browser does not support the audio element.</audio>
+	<p><b>Synthesis text</b>: But young sharp tongue, now that we have caught you, we will put you into a trap that you cannot get out of. </p>
+		<div class="table-responsive pt-3" tabindex="0">
+			<table class="table table-hover pt-2">
+				<thead>
+					<tr>
+					<th style="text-align: center"></th>
+					<th style="text-align: center">GT</th>
+					<th style="text-align: center">RALL-E</th>
+					<th style="text-align: center">ELLA-V</th>
+					<th style="text-align: center">VALL-E</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Audio</td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/gt/01.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/ralle/01.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/ellav/01.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/valle/01.wav" >Your browser does not support the audio element.</audio></td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">ASR result</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">but young sharp tongue now that we have caught you we will put you into a trap that you cannot get out of</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">but young sharp tongue now that we have caught you we will put you into a trap that you cannot get out of</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">*** young ***** SHARPTON now that we have caught you we will put you into a trap **** THEY cannot get out of</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">*** ***** sharp tongue now that we have caught you we will put you into a trap that you cannot get out of</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">WER%</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">0</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">0</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">21.7</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">8.7</td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
+	<br/>
+	<p><b>Prompt text</b>: using every possible contraction a quarter of an hour, not less.</p>
+	<p><b>Prompt audio</b>:</p><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/prompt/02.wav" >Your browser does not support the audio element.</audio>
+	<p><b>Synthesis text</b>: When we were out in the darkness of the quadrangle, we again looked up at the windows. </p>
+		<div class="table-responsive pt-3" tabindex="0">
+			<table class="table table-hover pt-2">
+				<thead>
+					<tr>
+					<th style="text-align: center"></th>
+					<th style="text-align: center">GT</th>
+					<th style="text-align: center">RALL-E</th>
+					<th style="text-align: center">ELLA-V</th>
+					<th style="text-align: center">VALL-E</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Audio</td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/gt/02.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/ralle/02.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/ellav/02.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/valle/02.wav" >Your browser does not support the audio element.</audio></td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">ASR result</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">when we were out in the darkness of the quadrangle we again looked up at the windows</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">when we were out in the darkness of the quadrangle we again looked up at the windows</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">**** ** were out in the darkness of A QUIET DRANGLE    WEEK AND   looked up at the windows</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">when ** WE'RE out in the darkness of the quadrangle we again looked up at the windows</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">WER%</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">0</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">0</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">41.2</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">11.8</td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
+	<br/>
+	<p><b>Prompt text</b>: of this long separation will wear away.</p>
+	<p><b>Prompt audio</b>:</p><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/prompt/03.wav" >Your browser does not support the audio element.</audio>
+	<p><b>Synthesis text</b>: She, a Tory and clergyman's daughter, was always in a minority of one in our house of violent dissent and radicalism. </p>
+		<div class="table-responsive pt-3" tabindex="0">
+			<table class="table table-hover pt-2">
+				<thead>
+					<tr>
+					<th style="text-align: center"></th>
+					<th style="text-align: center">GT</th>
+					<th style="text-align: center">RALL-E</th>
+					<th style="text-align: center">ELLA-V</th>
+					<th style="text-align: center">VALL-E</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Audio</td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/gt/03.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/ralle/03.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/ellav/03.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/valle/03.wav" >Your browser does not support the audio element.</audio></td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">ASR result</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">she a tory and clergyman's daughter was always in a minority of one in our house of violent dissent and radicalism</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">she a tory and clergyman's daughter was always in a minority of one in our house of violent dissent and radicalism</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">*** * **** and clergyman's daughter was always in a minority of one in our house of violent ******* DISSENTING radicalism</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">she a tory and clergyman's daughter was always in a minority ** one in our house of VIOLET  dissent and radicalism</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">WER%</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">0</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">0</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">23.8</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">9.5</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	<br/>
+	<p><b>Prompt text</b>: Far from its sire, your majesty haven't given</p>
+	<p><b>Prompt audio</b>:</p><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/prompt/04.wav" >Your browser does not support the audio element.</audio>
+	<p><b>Synthesis text</b>: Quick, quick then, among the high-reed grass said Montalais. Stoop, Athenais, you are so tall. </p>
+		<div class="table-responsive pt-3" tabindex="0">
+			<table class="table table-hover pt-2">
+				<thead>
+					<tr>
+					<th style="text-align: center"></th>
+					<th style="text-align: center">GT</th>
+					<th style="text-align: center">RALL-E</th>
+					<th style="text-align: center">ELLA-V</th>
+					<th style="text-align: center">VALL-E</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Audio</td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/gt/04.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/ralle/04.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/ellav/04.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/valle/04.wav" >Your browser does not support the audio element.</audio></td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">ASR result</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">quick quick then among the high reed grass said montalais stoop ATHENAE  you are so tall</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">quick quick then among the high reed grass said montalais stoop athenais you are so tall</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">quick WICK  THAN among the high READ grass said montalais TO    PATHANAY you are so tall</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">QUICK quick quick then among the **** HYRID grass said MONTEL EYES BE AN AST TOO       stoop ATHANIZE you are so tall</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">WER%</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">6.25</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">0</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">31.25</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">62.5</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br/>
+	<p><b>Prompt text</b>: drew back from John Yago as he approached the empty chair next</p>
+	<p><b>Prompt audio</b>:</p><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/prompt/05.wav" >Your browser does not support the audio element.</audio>
+	<p><b>Synthesis text</b>: Soft heart, he said gently to her. Then to Thorkel. Well, let him go, Thorkel. </p>
+		<div class="table-responsive pt-3" tabindex="0">
+			<table class="table table-hover pt-2">
+				<thead>
+					<tr>
+					<th style="text-align: center"></th>
+					<th style="text-align: center">GT</th>
+					<th style="text-align: center">RALL-E</th>
+					<th style="text-align: center">ELLA-V</th>
+					<th style="text-align: center">VALL-E</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Audio</td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/gt/05.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/ralle/05.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/ellav/05.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 200px;"><source src="audio/zero-shot/valle/05.wav" >Your browser does not support the audio element.</audio></td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">ASR result</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">soft heart he said gently to her then to TORKELL well let him go TORKELL</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">soft heart he said gently to her then to thorkel well let him go thorkel</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">soft heart he said JEALOUSY to her THAN to FORKEL  well let him go FORKEL</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">JANKS AND LOW  HARK  he said gently to her THEN TO THORKEL OH then to thorkel well let him go thorkel</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">WER%</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">13.3</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">0</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">26.7</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">53.3</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+</div>
+
+
+<div class="container pt-5 mt-5 shadow p-5 mb-5 bg-white rounded">
+	<h2 style="text-align: center;"> Samples of hard setences </h2>
+	<h6 style="text-align: left;"> We show samples of the hard sentences mentioned
+		 in Section 4.4 of the paper.
+		 These sentences have no GT utterance.
+		 We describe the errors
+		 (<b>mispronunciation, omission, repetition, hallucination</b>)
+		  existing in the samples.
+	</h6>
+	<hr>
+	<p><b>Synthesis text</b>: b </p>
+		<div class="table-responsive pt-3" tabindex="0">
+			<table class="table table-hover pt-2">
+				<thead>
+					<tr>
+					<th style="text-align: center"></th>
+					<th style="text-align: center">RALL-E</th>
+					<th style="text-align: center">VALL-E</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Audio</td>
+						<td style="text-align: center"><audio controls="controls" style="width: 400px;"><source src="audio/hard/ralle/01.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 400px;"><source src="audio/hard/valle/01.wav" >Your browser does not support the audio element.</audio></td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Errors</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px"></td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">B is repeated twice.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br/>
+		<p><b>Synthesis text</b>: 22222222 hello 22222222 </p>
+		<div class="table-responsive pt-3" tabindex="0">
+			<table class="table table-hover pt-2">
+				<thead>
+					<tr>
+					<th style="text-align: center"></th>
+					<th style="text-align: center">RALL-E</th>
+					<th style="text-align: center">VALL-E</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Audio</td>
+						<td style="text-align: center"><audio controls="controls" style="width: 400px;"><source src="audio/hard/ralle/02.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 400px;"><source src="audio/hard/valle/02.wav" >Your browser does not support the audio element.</audio></td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Errors</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px"></td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">"2" is synthesized 9 times before "hello" and 7 times after "hello", but in the input text "2" is repeated 8 times at both sides of "hello". </td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br/>
+		<p><b>Synthesis text</b>: c five eight zero three three nine a zero bf eight FALSE zero zero zero bba3add2 - c229 -
+			4cdb - </p>
+		<div class="table-responsive pt-3" tabindex="0">
+			<table class="table table-hover pt-2">
+				<thead>
+					<tr>
+					<th style="text-align: center"></th>
+					<th style="text-align: center">RALL-E</th>
+					<th style="text-align: center">VALL-E</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Audio</td>
+						<td style="text-align: center"><audio controls="controls" style="width: 400px;"><source src="audio/hard/ralle/03.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 400px;"><source src="audio/hard/valle/03.wav" >Your browser does not support the audio element.</audio></td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Errors</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px"></td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Omission and hallucination</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br/>
+		<p><b>Synthesis text</b>: You can call me directly at four two five seven zero three seven three four four or my cell
+			four two five four four four seven four seven four or send me a meeting request with all
+			the appropriate information. </p>
+		<div class="table-responsive pt-3" tabindex="0">
+			<table class="table table-hover pt-2">
+				<thead>
+					<tr>
+					<th style="text-align: center"></th>
+					<th style="text-align: center">RALL-E</th>
+					<th style="text-align: center">VALL-E</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Audio</td>
+						<td style="text-align: center"><audio controls="controls" style="width: 400px;"><source src="audio/hard/ralle/04.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 400px;"><source src="audio/hard/valle/04.wav" >Your browser does not support the audio element.</audio></td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Errors</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px"></td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">"four" is omitted once in the cell phone number</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br/>
+		<p><b>Synthesis text</b>: Thanks J RGR Are you using the LDDM driver for this system or the in the build XDDM
+			driver ? 12</p>
+		<div class="table-responsive pt-3" tabindex="0">
+			<table class="table table-hover pt-2">
+				<thead>
+					<tr>
+					<th style="text-align: center"></th>
+					<th style="text-align: center">RALL-E</th>
+					<th style="text-align: center">VALL-E</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Audio</td>
+						<td style="text-align: center"><audio controls="controls" style="width: 400px;"><source src="audio/hard/ralle/05.wav" >Your browser does not support the audio element.</audio></td>
+						<td style="text-align: center"><audio controls="controls" style="width: 400px;"><source src="audio/hard/valle/05.wav" >Your browser does not support the audio element.</audio></td>
+					</tr>
+					<tr>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">Errors</td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px"></td>
+						<td style="text-align: center;vertical-align:middle;width: 100px;min-width: 100px">"LDDM" is mispronunced, and hallucination at the end.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br/>
+</div>
+
+</body>
+</html>
